@@ -2,6 +2,8 @@
 Tests for products api
 """
 
+from datetime import datetime, date, timedelta
+
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from core import models
@@ -9,7 +11,6 @@ from django.urls import reverse
 
 from rest_framework.test import APIClient
 from rest_framework import status
-from datetime import datetime, timedelta
 
 
 ALL_URL = reverse('products:all_products')
@@ -17,7 +18,6 @@ NEW_URL = reverse('products:new')
 DISCOUNT_URL = reverse('products:discounts')
 FASHION_CATEGORY_URL = reverse(
     'products:category', kwargs={"category": "fashion"})
-SINGLE_PRODUCT_URL = reverse('products:product', args=[1])
 
 
 class ProductTests(TestCase):
@@ -27,12 +27,13 @@ class ProductTests(TestCase):
     def setUpTestData(self):
         """Setting up base data"""
         self.data_titles = []
+        self.data_ids = []
         for i in range(5):
             product_info = {
                 'title': f'sample product{i}',
-                'description': 'blah blah blah {i}',
+                'description': f'blah blah blah {i}',
                 'price': 4.9+i,
-                'creation_date': datetime.now()-timedelta(days=26*i),
+                'creation_date': date.today()-timedelta(days=26*i),
             }
             if i % 2 == 0:
                 product_info['discount'] = 0.9-i*0.1
@@ -41,18 +42,12 @@ class ProductTests(TestCase):
             instance = models.Product.objects.create(**product_info)
             instance.save()
             self.data_titles.append(instance.title)
+            self.data_ids.append(instance.id)
 
         self.client = APIClient()
 
     def test_getting_all_products(self):
         """testing that getting all products work"""
-        for i in range(5):
-            product_info = {
-                'title': f'sample product{i}',
-                'description': 'blah blah blah {i}',
-                'price': 4.9+i,
-            }
-            models.Product.objects.create(**product_info).save()
 
         res = self.client.get(ALL_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -87,6 +82,9 @@ class ProductTests(TestCase):
         self.assertEqual(self.data_titles[3], res.data[1]['title'])
 
     def test_retrieve_single_product(self):
+        """test getting information on a single product"""
+        SINGLE_PRODUCT_URL = reverse(
+            'products:product', args=[self.data_ids[0]])
         res = self.client.get(SINGLE_PRODUCT_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data['title'], self.data_titles[0])

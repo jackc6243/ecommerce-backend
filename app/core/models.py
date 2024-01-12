@@ -1,6 +1,7 @@
 """
 Database models
 """
+from datetime import date
 
 from django.db import models
 from django.contrib.auth.models import (
@@ -56,7 +57,7 @@ class Product(models.Model):
     category = models.CharField(max_length=255, default='technology')
     price = models.FloatField()
     discount = models.FloatField(default=1.0)
-    creation_date = models.DateField(auto_now_add=True)
+    creation_date = models.DateField(default=date.today)
 
     # objects = productManager()
 

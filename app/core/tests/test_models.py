@@ -1,6 +1,8 @@
 """
 Tests for models
 """
+from datetime import date
+
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from core import models
@@ -57,11 +59,18 @@ class ModelTests(TestCase):
             'title': 'sample product',
             'description': 'blah blah blah',
             'price': 4.9,
+            'category': 'test_category',
+            'discount': 0.4,
+            'creation_date': date(2019, 4, 3),
         }
 
         product = models.Product.objects.create(**product_info)
         self.assertEqual(product.title, product_info['title'])
         self.assertEqual(product.price, product_info['price'])
+        self.assertEqual(product.description, product_info['description'])
+        self.assertEqual(product.category, product_info['category'])
+        self.assertEqual(product.discount, product_info['discount'])
+        self.assertEqual(product.creation_date, product_info['creation_date'])
 
     # def test_add_to_favorites(self):
     #     """Testing can add a product to favorites"""

@@ -9,5 +9,5 @@ urlpatterns = [
     path('discounts/', views.DiscountProductView.as_view(), name='discounts'),
     path('categories/<str:category>/',
          views.CategoryProductView.as_view(), name='category'),
-    path('<int:pk>', views.RetrieveSingleProduct.as_view(), name='product'),
+    path('<int:pk>/', views.RetrieveSingleProduct.as_view(), name='product'),
 ]
