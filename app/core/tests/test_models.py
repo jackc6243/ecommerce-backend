@@ -3,6 +3,7 @@ Tests for models
 """
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from core import models
 
 
 class ModelTests(TestCase):
@@ -48,3 +49,29 @@ class ModelTests(TestCase):
 
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+    def test_create_new_product(self):
+        """Test creating new product"""
+
+        product_info = {
+            'title': 'sample product',
+            'description': 'blah blah blah',
+            'price': 4.9,
+        }
+
+        product = models.Product.objects.create(**product_info)
+        self.assertEqual(product.title, product_info['title'])
+        self.assertEqual(product.price, product_info['price'])
+
+    # def test_add_to_favorites(self):
+    #     """Testing can add a product to favorites"""
+    #     user = get_user_model().objects.create_user(
+    #         'test@example.com',
+    #         'password1234',
+    #     )
+    #     product = models.Product.objects.create(
+    #         user=user,
+    #         title='Sample title'
+    #     )
+
+    #     self.assertEqual(str(product), product.title)

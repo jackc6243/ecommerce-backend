@@ -46,3 +46,19 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+
+
+class Product(models.Model):
+    """Product model"""
+    user = models.ManyToManyField(User, blank=True)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    category = models.CharField(max_length=255, default='technology')
+    price = models.FloatField()
+    discount = models.FloatField(default=1.0)
+    creation_date = models.DateField(auto_now_add=True)
+
+    # objects = productManager()
+
+    def __str__(self):
+        return self.title
