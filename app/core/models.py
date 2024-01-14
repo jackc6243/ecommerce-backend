@@ -1,14 +1,31 @@
 """
 Database models
 """
-from datetime import date
-
-from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )
+from datetime import date
+from django.db import models
+import uuid
+import os
+
+
+def product_image_file_path(instance, filename):
+    """Generate file path for new product image"""
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+
+    return os.path.join('uploads', 'products', filename)
+
+
+def flyer_image_file_path(instance, filename):
+    """Generate file path for new flyer image"""
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+
+    return os.path.join('uploads', 'flyers', filename)
 
 
 class UserManager(BaseUserManager):
@@ -58,8 +75,24 @@ class Product(models.Model):
     price = models.FloatField()
     discount = models.FloatField(default=1.0)
     creation_date = models.DateField(default=date.today)
+    alt = models.TextField(max_length=255, default='product')
+    image = models.ImageField(
+        null=True,
+        upload_to=product_image_file_path)
 
     # objects = productManager()
+
+    def __str__(self):
+        return self.title
+
+
+class Flyer(models.Model):
+    """Images and names of flyers"""
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    image = models.ImageField(
+        null=True,
+        upload_to=flyer_image_file_path)
 
     def __str__(self):
         return self.title

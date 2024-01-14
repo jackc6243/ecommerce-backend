@@ -2,6 +2,7 @@
 Tests for models
 """
 from datetime import date
+from unittest.mock import patch
 
 from django.test import TestCase
 from django.contrib.auth import get_user_model
@@ -71,6 +72,37 @@ class ModelTests(TestCase):
         self.assertEqual(product.category, product_info['category'])
         self.assertEqual(product.discount, product_info['discount'])
         self.assertEqual(product.creation_date, product_info['creation_date'])
+
+    @patch('core.models.uuid.uuid4')
+    def test_product_file_name_uuid(self, mock_uuid):
+        """Test image is saved in the correct location"""
+        uuid = 'test-uuid'
+        mock_uuid.return_value = uuid
+        file_path = models.product_image_file_path(None, 'myimage.jpg')
+
+        exp_path = f'uploads/products/{uuid}.jpg'
+        self.assertEqual(file_path, exp_path)
+
+    def test_create_new_flyer(self):
+        """Test creating new flyer"""
+        flyer_info = {
+            'title': 'sample flyer',
+            'description': 'blah blah blah',
+        }
+
+        flyer = models.Flyer.objects.create(**flyer_info)
+
+        self.assertEqual(flyer.title, flyer_info['title'])
+
+    @patch('core.models.uuid.uuid4')
+    def test_flyer_file_name_uuid(self, mock_uuid):
+        """Test image is saved in the correct location"""
+        uuid = 'test-uuid'
+        mock_uuid.return_value = uuid
+        file_path = models.flyer_image_file_path(None, 'myimage.jpg')
+
+        exp_path = f'uploads/flyers/{uuid}.jpg'
+        self.assertEqual(file_path, exp_path)
 
     # def test_add_to_favorites(self):
     #     """Testing can add a product to favorites"""
