@@ -90,6 +90,7 @@ class Flyer(models.Model):
     """Images and names of flyers"""
     title = models.CharField(max_length=255)
     description = models.TextField()
+    category = models.CharField(max_length=255, default='main')
     image = models.ImageField(
         null=True,
         upload_to=flyer_image_file_path)

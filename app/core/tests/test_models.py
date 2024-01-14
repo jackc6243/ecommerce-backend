@@ -88,11 +88,14 @@ class ModelTests(TestCase):
         flyer_info = {
             'title': 'sample flyer',
             'description': 'blah blah blah',
+            'category': 'sample-category'
         }
 
         flyer = models.Flyer.objects.create(**flyer_info)
 
         self.assertEqual(flyer.title, flyer_info['title'])
+        self.assertEqual(flyer.description, flyer_info['description'])
+        self.assertEqual(flyer.category, flyer_info['category'])
 
     @patch('core.models.uuid.uuid4')
     def test_flyer_file_name_uuid(self, mock_uuid):
