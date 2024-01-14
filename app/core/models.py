@@ -54,23 +54,10 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser, PermissionsMixin):
-    """User model"""
-    email = models.EmailField(max_length=255, unique=True)
-    name = models.CharField(max_length=255)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-
-    objects = UserManager()
-
-    USERNAME_FIELD = 'email'
-
-
 class Product(models.Model):
     """Product model"""
-    user = models.ManyToManyField(User, blank=True)
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(null=True)
     category = models.CharField(max_length=255, default='technology')
     price = models.FloatField()
     discount = models.FloatField(default=1.0)
@@ -84,6 +71,19 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    """User model"""
+    email = models.EmailField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    favorites = models.ManyToManyField(Product, blank=True)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
 
 
 class Flyer(models.Model):

@@ -8,23 +8,33 @@ from django.contrib.auth import (
 )
 from django.utils.translation import gettext as _
 from rest_framework import serializers
+from core import models
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object."""
+    favorites = serializers.PrimaryKeyRelatedField(
+        many=True, read_only=False, queryset=models.Product.objects.all(), allow_null=True)
 
     class Meta:
         model = get_user_model()
-        fields = ['email', 'password', 'name']
+        fields = ['email', 'password', 'name', 'favorites']
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
 
     def create(self, validated_data):
         """Create and return a user with encrypted password."""
-        return get_user_model().objects.create_user(**validated_data)
+        validated_data.pop('favorites', None)
+        user = get_user_model().objects.create_user(**validated_data)
+        user.save()
+        return user
 
     def update(self, instance, validated_data):
         """Update and return user."""
         password = validated_data.pop('password', None)
+        new_favorites = validated_data.pop('favorites', None)
+        if new_favorites:
+            instance.favorites.set(new_favorites)
+
         user = super().update(instance, validated_data)
 
         if password:

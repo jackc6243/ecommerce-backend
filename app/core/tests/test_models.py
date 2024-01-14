@@ -107,15 +107,25 @@ class ModelTests(TestCase):
         exp_path = f'uploads/flyers/{uuid}.jpg'
         self.assertEqual(file_path, exp_path)
 
-    # def test_add_to_favorites(self):
-    #     """Testing can add a product to favorites"""
-    #     user = get_user_model().objects.create_user(
-    #         'test@example.com',
-    #         'password1234',
-    #     )
-    #     product = models.Product.objects.create(
-    #         user=user,
-    #         title='Sample title'
-    #     )
+    def test_add_to_favorites(self):
+        """Testing can add a product to favorites"""
+        product_infos = [{
+            'title': f'sample product{i}',
+            'description': 'blah blah blah',
+            'price': 4.9,
+            'category': 'test_category',
+            'discount': 0.4,
+            'creation_date': date(2019, 4, 3),
+        } for i in range(3)]
 
-    #     self.assertEqual(str(product), product.title)
+        user = get_user_model().objects.create_user(
+            'test@example.com',
+            'password1234',
+        )
+
+        for product_info in product_infos:
+            product = models.Product.objects.create(**product_info)
+            user.favorites.add(product)
+
+        for i, favorite in enumerate(user.favorites.all()):
+            self.assertEqual(product_infos[i]['title'], favorite.title)

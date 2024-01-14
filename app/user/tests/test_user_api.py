@@ -6,6 +6,10 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
+from datetime import date
+
+from core import models
+
 from rest_framework.test import APIClient
 from rest_framework import status
 
@@ -107,10 +111,26 @@ class PrivateUserAPITests(TestCase):
 
     def setUp(self):
         self.user = create_user(
-            email='test@example.com',
+            email='test2@example.com',
             password='testpass123',
             name='Test Name',
         )
+        product_infos = [{
+            'title': f'sample product{i}',
+            'description': 'blah blah blah',
+            'price': 4.9,
+            'category': 'test_category',
+            'discount': 0.4,
+            'creation_date': date(2019, 4, 3),
+        } for i in range(3)]
+
+        self.products = []
+        for product_info in product_infos:
+            p = models.Product.objects.create(**product_info)
+            p.save()
+            self.products.append(p)
+        self.user.favorites.add(self.products[-1])
+
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
@@ -121,6 +141,7 @@ class PrivateUserAPITests(TestCase):
         self.assertEqual(res.data, {
             'name': self.user.name,
             'email': self.user.email,
+            'favorites': [self.products[-1].id]
         })
 
     def test_post_me_not_allowed(self):
@@ -132,8 +153,20 @@ class PrivateUserAPITests(TestCase):
         """Test updating the user profile for the authenticated user."""
         payload = {'name': 'Updated name', 'password': 'newpassword123'}
         res = self.client.patch(ME_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
 
         self.user.refresh_from_db()
         self.assertEqual(self.user.name, payload['name'])
         self.assertTrue(self.user.check_password(payload['password']))
+
+    def test_patch_user_favorites(self):
+        """Test user favorites can be updated"""
+        payload = {
+            'favorites': [self.products[0].id],
+        }
+        res = self.client.patch(ME_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.favorites.all().filter(
+            id=payload['favorites'][0]).exists())
