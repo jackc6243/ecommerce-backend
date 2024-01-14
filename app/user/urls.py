@@ -11,6 +11,4 @@ urlpatterns = [
     path('create/', views.CreateUserView.as_view(), name='create'),
     path('token/', views.CreateTokenView.as_view(), name='token'),
     path('me/', views.ManageUserView.as_view(), name='me'),
-    # path('me/add-favorite/<int:pk>', views.ManageUserView.as_view(), name='add-favorite'),
-    # path('me/remove-favorite/<int:pk>', views.ManageUserView.as_view(), name='remove-favorite'),
 ]

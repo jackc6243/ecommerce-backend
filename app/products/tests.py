@@ -2,10 +2,9 @@
 Tests for products api
 """
 
-from datetime import datetime, date, timedelta
+from datetime import date, timedelta
 
 from django.test import TestCase
-from django.contrib.auth import get_user_model
 from core import models
 from django.urls import reverse
 

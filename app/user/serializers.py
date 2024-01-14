@@ -14,7 +14,10 @@ from core import models
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object."""
     favorites = serializers.PrimaryKeyRelatedField(
-        many=True, read_only=False, queryset=models.Product.objects.all(), allow_null=True)
+        many=True,
+        read_only=False,
+        queryset=models.Product.objects.all(),
+        allow_null=True)
 
     class Meta:
         model = get_user_model()

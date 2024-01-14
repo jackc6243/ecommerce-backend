@@ -2,7 +2,7 @@
 Views for products api
 """
 
-from rest_framework import generics, authentication, permissions
+from rest_framework import generics
 from products.serializers import ProductSerializer
 from core import models
 

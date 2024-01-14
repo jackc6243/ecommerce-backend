@@ -1,4 +1,4 @@
-from rest_framework import generics, authentication, permissions
+from rest_framework import generics
 from flyers.serializers import FlyerSerializer
 from core import models
 

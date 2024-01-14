@@ -4,11 +4,11 @@ Django admin customizatoin
 
 
 from core import models
-from django.utils.translation import gettext_lazy as _
+# from django.utils.translation import gettext_lazy as _
 
 from django.contrib import admin
 
-from django.contrib.auth.admin import UserAdmin
+# from django.contrib.auth.admin import UserAdmin
 admin.site.register(models.User)
 admin.site.register(models.Product)
 admin.site.register(models.Flyer)
