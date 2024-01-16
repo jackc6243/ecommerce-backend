@@ -6,8 +6,10 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
-from datetime import date
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+
+from datetime import date
 import uuid
 import os
 
@@ -58,9 +60,12 @@ class Product(models.Model):
     """Product model"""
     title = models.CharField(max_length=255)
     description = models.TextField(null=True)
-    category = models.CharField(max_length=255, default='technology')
     price = models.FloatField()
     discount = models.FloatField(default=1.0)
+    rating = models.FloatField(
+        validators=[MinValueValidator(0.0), MaxValueValidator(5.0)], default=0.0)
+    num_rating = models.IntegerField(default=0)
+    category = models.CharField(max_length=255, default='technology')
     creation_date = models.DateField(default=date.today)
     alt = models.TextField(max_length=255, default='product')
     image = models.ImageField(
